@@ -15,7 +15,7 @@ pipeline {
             }
             steps {
                 script {
-                sh 'apt-get update && apt-get install -y nodejs npm'
+                sh 'apt-get install -y npm --fix-broken'
                 sh 'node -v'
                 sh 'npm -v'
                     sh 'npm ci'
