@@ -13,17 +13,14 @@ pipeline {
             }
             steps {
                 script {
+                sh 'apt-get update && apt-get install -y nodejs npm'
+                sh 'node -v'
+                sh 'npm -v'
                     sh 'npm ci'
                 }
             }
         }
-        stage('Check Node.js Installation') {
-            steps {
-                sh 'node -v'
-                sh 'npm -v'
-                sh 'npx --version'
-            }
-        }
+       
         stage('Tests Fonctionnels') {
             parallel {
                 stage('Login Tests') {
