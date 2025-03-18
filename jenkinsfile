@@ -1,14 +1,14 @@
 pipeline {
     agent any
-    parameters {
-        string(name: 'String_TAG', defaultValue: '', description: 'Tag de test')
-        choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Sélectionne un tag de test')
-    }
+    // parameters {
+    //     string(name: 'String_TAG', defaultValue: '', description: 'Tag de test')
+    //     choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Sélectionne un tag de test')
+    // }
     stages {
         stage('Build and Install') {
             agent {
                 docker {
-                     image 'mcr.microsoft.com/playwright:v1.51.0-noble-focal' 
+                    image 'mcr.microsoft.com/playwright:v1.51.0-noble'
                 }
             }
             steps {
@@ -17,7 +17,13 @@ pipeline {
                 }
             }
         }
-
+        stage('Check Node.js Installation') {
+            steps {
+                sh 'node -v'
+                sh 'npm -v'
+                sh 'npx --version'
+            }
+        }
         stage('Tests Fonctionnels') {
             parallel {
                 stage('Login Tests') {
