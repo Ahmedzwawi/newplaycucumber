@@ -8,7 +8,7 @@ pipeline {
 
     stages {
         stage('Install Dependencies') {
-            agent { label 'node-agent' }
+            agent any
             steps {
                 script {
                     sh 'npm ci'
@@ -18,7 +18,7 @@ pipeline {
         }
 
         stage('Run Tests') {
-            agent any {
+            agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.51.0-noble'
                     args '-u root:root'
