@@ -2,11 +2,14 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   use: {
-    headless: false, // Run in GUI mode
+    headless: true, // Passer en mode headless (sans interface graphique)
+
+    // headless: false, // Run in GUI mode
     trace: 'on', // Capture traces
     screenshot: 'on',
     video: 'retain-on-failure'
   },
+  
 //   workers: 4,
   
 //   projects: [
