@@ -1,42 +1,45 @@
 pipeline {
     agent any
+
+    parameters {
+        string(name: 'String_TAG', defaultValue: '', description: 'Tag de test')
+        choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Sélectionne un tag de test')
+    }
+
     stages {
-        stage('build and install') {
+        stage('Build and Install') {
             agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.51.0-noble'
                 }
             }
-    parameters {
-        string(name: 'String_TAG', defaultValue: '', description: 'Tag de test')
-        choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration','@Post'], description: 'Sélectionne un tag de test')
-    }
+            
             steps {
                 script {
                     sh 'npm ci'
-                     //sh 'npx cucumber-js --format json:reports/cucumber-report.json'
+                    
                     def tagToUse = params.String_TAG ?: params.CHOICE_TAG
                     sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${tagToUse}'"
-                
+                }
             }
-
         }
     }
-post {
-    always {
-        cucumber buildStatus: 'UNSTABLE',
+
+    post {
+        always {
+            cucumber buildStatus: 'UNSTABLE',
                 failedFeaturesNumber: 1,
                 failedScenariosNumber: 1,
                 skippedStepsNumber: 1,
                 failedStepsNumber: 1,
                 classifications: [
-                        [key: 'Commit', value: '<a href="${GERRIT_CHANGE_URL}">${GERRIT_PATCHSET_REVISION}</a>'],
-                        [key: 'Submitter', value: '${GERRIT_PATCHSET_UPLOADER_NAME}']
+                    [key: 'Commit', value: "<a href='${GERRIT_CHANGE_URL}'>${GERRIT_PATCHSET_REVISION}</a>"],
+                    [key: 'Submitter', value: "${GERRIT_PATCHSET_UPLOADER_NAME}"]
                 ],
                 reportTitle: 'My report',
                 fileIncludePattern: 'reports/cucumber-report.json',
                 sortingMethod: 'ALPHABETICAL',
                 trendsLimit: 100
+        }
     }
-}
 }
