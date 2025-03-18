@@ -11,7 +11,7 @@ pipeline {
             steps {
                 script {
                     sh 'npm ci'
-                    sh 'npx cucumber-js'
+                    sh 'npx cucumber-js --format json:reports/cucumber-report.json'
                
                 }
             }
