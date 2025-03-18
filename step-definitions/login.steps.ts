@@ -11,7 +11,6 @@ Given('I open the login page', async function () {
 
 When('I login with username {string} and password {string}', async function (username: string, password: string) {
   await loginPage.login(username, password);
-
 });
 
 Then('I should be redirected to the dashboard', async function () {
