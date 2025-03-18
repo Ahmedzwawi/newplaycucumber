@@ -15,29 +15,49 @@ pipeline {
 
             steps {
                 script {
+                    
                     sh 'npm ci'
-                    def tagToUse = params.String_TAG ?: params.CHOICE_TAG
-                    sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${params.CHOICE_TAG}'"
+                    // def tagToUse = params.String_TAG ?: params.CHOICE_TAG
+                    // sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${params.CHOICE_TAG}'"
+                    // sh "npm run only '${params.CHOICE_TAG}'"
+                    sh 'npx playwright test --reporter=line,allure-playwright'
+                    stash name: 'allure-results', includes: 'allure-results/*'
+
                 }
             }
 
         }
     }
-post {
-    always {
-        cucumber buildStatus: 'UNSTABLE',
-                failedFeaturesNumber: 1,
-                failedScenariosNumber: 1,
-                skippedStepsNumber: 1,
-                failedStepsNumber: 1,
-                classifications: [
-                        [key: 'Commit', value: '<a href="${GERRIT_CHANGE_URL}">${GERRIT_PATCHSET_REVISION}</a>'],
-                        [key: 'Submitter', value: '${GERRIT_PATCHSET_UPLOADER_NAME}']
-                ],
-                reportTitle: 'My report',
-                fileIncludePattern: 'reports/cucumber-report.json',
-                sortingMethod: 'ALPHABETICAL',
-                trendsLimit: 100
+    post {
+        always {
+            unstash 'allure-results'
+            script {
+                allure([
+                    includeProperties: false,
+                    jdk: '',
+                    properties: [],
+                    reportBuildPolicy: 'ALWAYS',
+                    results: [[path: 'allure-results']]
+                ])
+            }
+        }
     }
-}
+
+// post {
+//     always {
+//         cucumber buildStatus: 'UNSTABLE',
+//                 failedFeaturesNumber: 1,
+//                 failedScenariosNumber: 1,
+//                 skippedStepsNumber: 1,
+//                 failedStepsNumber: 1,
+//                 classifications: [
+//                         [key: 'Commit', value: '<a href="${GERRIT_CHANGE_URL}">${GERRIT_PATCHSET_REVISION}</a>'],
+//                         [key: 'Submitter', value: '${GERRIT_PATCHSET_UPLOADER_NAME}']
+//                 ],
+//                 reportTitle: 'My report',
+//                 fileIncludePattern: 'reports/cucumber-report.json',
+//                 sortingMethod: 'ALPHABETICAL',
+//                 trendsLimit: 100
+//     }
+// }
 }
