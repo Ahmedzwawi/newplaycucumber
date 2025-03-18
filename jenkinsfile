@@ -9,17 +9,6 @@ pipeline {
             agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.51.0-noble'
-                    args '--user root'
-
-                }
-            }
-            steps {
-                script {
-                sh 'apt-get install -y npm --fix-broken'
-                sh 'node -v'
-                sh 'npm -v'
-                sh 'npx -v'
-                    sh 'npm ci'
 
                 }
             }
