@@ -17,7 +17,7 @@ pipeline {
                     sh 'npm ci'
                     //sh 'npx cucumber-js --format json:reports/cucumber-report.json'
                     def tagToUse = params.String_TAG ?: params.CHOICE_TAG
-                    sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${tagToUse}'"
+                    sh "npx cucumber-js --format json:reports/cucumber-report.json TAGS='${params.CHOICE_TAG}'"
                 }
             }
 
