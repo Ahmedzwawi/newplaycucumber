@@ -8,7 +8,9 @@ module.exports = {
       format: [
         "json:reports/cucumber-report.json", // JSON report for analysis
         "html:reports/cucumber-report.html",  // HTML report for human-readable output
-        "allure-cucumberjs/reporter"
+        "allure-cucumberjs/reporter",
+        "allure-playwright", 
+      "line"               
 
       ],
       //  tags: "@valid",  // Run specific tests with tags
