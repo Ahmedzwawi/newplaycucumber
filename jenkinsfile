@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    parameters {
+        string(name: 'String_TAG', defaultValue: '', description: 'Tag de test')
+        choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration','@Post'], description: 'Sélectionne un tag de test')
+    }
     stages {
         stage('build and install') {
             agent {
@@ -7,10 +11,7 @@ pipeline {
                     image 'mcr.microsoft.com/playwright:v1.51.0-noble'
                 }
             }
-parameters {
-        string(name: 'String_TAG', defaultValue: '', description: 'Tag de test')
-        choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration','@Post'], description: 'Sélectionne un tag de test')
-    }
+
             steps {
                 script {
                     sh 'npm ci'
