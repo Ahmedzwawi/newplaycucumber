@@ -23,12 +23,12 @@ pipeline {
             parallel {
                 stage('Login Tests') {
                     steps {
-                        sh "npx cucumber-js features/login.feature --format json:reports/login-report.json --parallel 4"
+                        sh "npx cucumber-js --config cucumber.js --tags=@valid --format json:reports/login-report.json --parallel 4"
                     }
                 }
                 stage('Checkout Tests') {
                     steps {
-                        sh "npx cucumber-js features/dashboard.feature --format json:reports/checkout-report.json --parallel 4"
+                        sh "npx cucumber-js --config cucumber.js --tags=@Post --format json:reports/login-report.json --parallel 4"
                     }
                 }
               
