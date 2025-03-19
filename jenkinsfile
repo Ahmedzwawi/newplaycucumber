@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['DEV', 'PROD'], description: 'Choix de l\'environnement')
+        choice(name: 'ENVIRONMENT', choices: ['DEV', 'PROD'], description: 'Choix de lenvironnement')
         choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Tag des tests')
     }
 
@@ -10,14 +10,14 @@ pipeline {
         stage('Install Dependencies') {
             agent {
                 docker {
-                     image 'mcr.microsoft.com/playwright:v1.51.0-noble' // ✅ Image avec Node.js
+                     image 'mcr.microsoft.com/playwright:v1.51.0-noble' 
                     args '-u root:root'
                 }
             }
             steps {
                 script {
-                    sh 'node -v' // Vérifier la version de Node.js
-                    sh 'npm -v' // Vérifier la version de npm
+                    sh 'node -v'
+                    sh 'npm -v'
                     sh 'npm ci'
                     stash name: 'node_modules', includes: 'node_modules/**'
                 }
@@ -27,16 +27,15 @@ pipeline {
         stage('Run Tests') {
             agent {
                 docker {
-                     image 'mcr.microsoft.com/playwright:v1.51.0-noble'// ✅ Même image avec Node.js
+                     image 'mcr.microsoft.com/playwright:v1.51.0-noble'
                     args '-u root:root'
                 }
             }
             steps {
                 script {
+                     sh 'npm ci'
                     def BASE_URL = params.ENVIRONMENT == 'DEV' ? 'http://192.168.1.95:9091/admin/login/?next=/admin/' : 'http://192.168.1.95:9092/admin/login/?next=/admin/'
-                    echo "Tests en cours sur : ${BASE_URL}"
-
-                    unstash 'node_modules'
+                    // unstash 'node_modules'
                     sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${params.CHOICE_TAG}' --world-parameters '{\"env\":\"${params.ENVIRONMENT}\", \"baseUrl\":\"${BASE_URL}\"}'"
                     stash name: 'allure-results', includes: 'allure-results/*'
                 }
@@ -44,15 +43,10 @@ pipeline {
         }
     }
 
-    post {
+  post {
         always {
+            unstash 'allure-results'
             script {
-                try {
-                    unstash 'allure-results'
-                } catch (Exception e) {
-                    echo "Aucun résultat trouvé pour les tests."
-                }
-                
                 allure([
                     includeProperties: false,
                     jdk: '',
@@ -61,22 +55,6 @@ pipeline {
                     results: [[path: 'allure-results']]
                 ])
             }
-            
-            archiveArtifacts artifacts: 'reports/*.json', fingerprint: true
-            publishHTML(target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: 'reports',
-                reportFiles: '*.json',
-                reportName: 'Cucumber JSON Reports'
-            ])
-        }
-
-        failure {
-            mail to: 'team@exemple.com',
-                 subject: "❌ Tests échoués sur ${env.BUILD_URL}",
-                 body: "Les tests ont échoué sur ${params.ENVIRONMENT} (${BASE_URL}). Voir le rapport ici : ${env.BUILD_URL}"
         }
     }
 }
