@@ -13,7 +13,7 @@ module.exports = {
       ],
       //  tags: "@valid",  // Run specific tests with tags
       worldParameters: {           // Custom parameters for tests
-        baseUrl: "https://opensource-demo.orangehrmlive.com"
+        baseUrl: process.env.BASE_URL || "http://rec.siteinfos.com/admin/login/?next=/admin/"  // Définit un baseUrl par défaut si aucune variable d'environnement n'est passée
       },
       requireModule: ["ts-node/register"], // Enable TypeScript
       timeout: 10000, // Set test timeout (10s)

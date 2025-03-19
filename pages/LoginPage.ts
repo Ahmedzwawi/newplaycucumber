@@ -2,15 +2,16 @@ import { Page } from 'playwright';
 
 export class LoginPage {
   private page: Page;
+  private baseUrl: string;  
 
-  constructor(page: Page) {
+  constructor(page: Page, baseUrl: string) {
     this.page = page;
+    this.baseUrl = baseUrl;  
   }
 
   async goto() {
-    await this.page.goto('http://192.168.1.95:9091/admin/login/?next=/admin/');
+    await this.page.goto(this.baseUrl);
   }
-
   // async login(username: string, password: string) {
   //   await this.page.fill('input[name="username"]', username);
   //   await this.page.fill('input[name="password"]', password);
