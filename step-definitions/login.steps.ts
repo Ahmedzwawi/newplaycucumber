@@ -5,9 +5,7 @@ import { expect } from '@playwright/test';
 let loginPage: LoginPage;
 
 Given('I open the login page', async function () {
-  
-  const { baseUrl } = this.worldParameters;  
-  loginPage = new LoginPage(this.page, baseUrl);  
+  loginPage = new LoginPage(this.page);
   await loginPage.goto();
 });
 
