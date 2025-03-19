@@ -6,10 +6,6 @@ pipeline {
         choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Tag des tests')
     }
 
-    environment {
-        BASE_URL = params.ENVIRONMENT == 'DEV' ? 'http://192.168.1.95:9091/admin/login/?next=/admin/' : 'http://192.168.1.95:9092/admin/login/?next=/admin/'
-    }
-
     stages {
         stage('Install Dependencies') {
             agent any
@@ -22,39 +18,21 @@ pipeline {
         }
 
         stage('Run Tests') {
-            parallel {
-                stage('Tests on DEV') {
-                    when { expression { params.ENVIRONMENT == 'DEV' } }
-                    agent {
-                        docker {
-                            image 'mcr.microsoft.com/playwright:v1.51.0-noble'
-                            args '-u root:root'
-                        }
-                    }
-                    steps {
-                        script {
-                            unstash 'node_modules'
-                            sh "npx cucumber-js --format json:reports/dev-cucumber-report.json --tags '${params.CHOICE_TAG}' --world-parameters '{\"env\":\"DEV\", \"baseUrl\":\"${BASE_URL}\"}'"
-                            stash name: 'allure-results-dev', includes: 'allure-results/*'
-                        }
-                    }
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.51.0-noble'
+                    args '-u root:root'
                 }
+            }
+            steps {
+                script {
+                    // ✅ Définition correcte de BASE_URL
+                    def BASE_URL = params.ENVIRONMENT == 'DEV' ? 'http://192.168.1.95:9091/admin/login/?next=/admin/' : 'http://192.168.1.95:9092/admin/login/?next=/admin/'
+                    echo "Tests en cours sur : ${BASE_URL}"
 
-                stage('Tests on PROD') {
-                    when { expression { params.ENVIRONMENT == 'PROD' } }
-                    agent {
-                        docker {
-                            image 'mcr.microsoft.com/playwright:v1.51.0-noble'
-                            args '-u root:root'
-                        }
-                    }
-                    steps {
-                        script {
-                            unstash 'node_modules'
-                            sh "npx cucumber-js --format json:reports/prod-cucumber-report.json --tags '${params.CHOICE_TAG}' --world-parameters '{\"env\":\"PROD\", \"baseUrl\":\"${BASE_URL}\"}'"
-                            stash name: 'allure-results-prod', includes: 'allure-results/*'
-                        }
-                    }
+                    unstash 'node_modules'
+                    sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${params.CHOICE_TAG}' --world-parameters '{\"env\":\"${params.ENVIRONMENT}\", \"baseUrl\":\"${BASE_URL}\"}'"
+                    stash name: 'allure-results', includes: 'allure-results/*'
                 }
             }
         }
@@ -64,10 +42,9 @@ pipeline {
         always {
             script {
                 try {
-                    unstash 'allure-results-dev'
-                    unstash 'allure-results-prod'
+                    unstash 'allure-results'
                 } catch (Exception e) {
-                    echo "Aucun résultat trouvé pour un des environnements."
+                    echo "Aucun résultat trouvé pour les tests."
                 }
                 
                 allure([
