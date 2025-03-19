@@ -34,6 +34,7 @@ pipeline {
             steps {
                 script {
                      sh 'npm ci'
+                     sh 'npm install --save-dev allure-cucumberjs'
                     def BASE_URL = params.ENVIRONMENT == 'DEV' ? 'http://192.168.1.95:9091/admin/login/?next=/admin/' : 'http://192.168.1.95:9092/admin/login/?next=/admin/'
                     // unstash 'node_modules'
                     sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${params.CHOICE_TAG}' --world-parameters '{\"env\":\"${params.ENVIRONMENT}\", \"baseUrl\":\"${BASE_URL}\"}'"
