@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['DEV', 'PROD'], description: 'Choix de lenvironnement')
+        choice(name: 'ENVIRONMENT', choices: ['DEV', 'PROD', 'integration', 'recette'], description: 'Choix de l\'environnement')
         choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Tag des tests')
     }
 
@@ -10,7 +10,7 @@ pipeline {
         stage('Install Dependencies') {
             agent {
                 docker {
-                     image 'mcr.microsoft.com/playwright:v1.51.0-noble' 
+                    image 'mcr.microsoft.com/playwright:v1.51.0-noble' 
                     args '-u root:root'
                 }
             }
@@ -27,24 +27,47 @@ pipeline {
         stage('Run Tests') {
             agent {
                 docker {
-                     image 'mcr.microsoft.com/playwright:v1.51.0-noble'
+                    image 'mcr.microsoft.com/playwright:v1.51.0-noble'
                     args '-u root:root'
                 }
             }
             steps {
                 script {
-                     sh 'npm ci'
-                     sh 'npm install --save-dev allure-cucumberjs'
-                    def BASE_URL = params.ENVIRONMENT == 'DEV' ? 'http://192.168.1.95:9091/admin/login/?next=/admin/' : 'http://192.168.1.95:9092/admin/login/?next=/admin/'
-                    // unstash 'node_modules'
-                    sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${params.CHOICE_TAG}' --world-parameters '{\"env\":\"${params.ENVIRONMENT}\", \"baseUrl\":\"${BASE_URL}\"}'"
+                    sh 'npm ci'
+                    sh 'npm install --save-dev allure-cucumberjs'
+
+                    // Définir les URLs et utilisateurs/mots de passe en fonction de l'environnement
+                    def BASE_URL
+                    def username
+                    def password
+                    
+                    if (params.ENVIRONMENT == 'DEV') {
+                        BASE_URL = 'http://192.168.1.95:9091/admin/login/?next=/admin/'
+                        username = 'testeur_dev'
+                        password = 'password_dev'
+                    } else if (params.ENVIRONMENT == 'PROD') {
+                        BASE_URL = 'http://192.168.1.95:9092/admin/login/?next=/admin/'
+                        username = 'testeur_prod'
+                        password = 'password_prod'
+                    } else if (params.ENVIRONMENT == 'integration') {
+                        BASE_URL = 'http://int.siteinfos.com/admin/login/?next=/admin/'
+                        username = 'testeur_integration'
+                        password = 'testeur_qa'
+                    } else if (params.ENVIRONMENT == 'recette') {
+                        BASE_URL = 'http://rec.siteinfos.com/admin/login/?next=/admin/'
+                        username = 'testeur_recette'
+                        password = 'testeur_qa_3'
+                    }
+
+                    // Exécuter les tests avec les paramètres appropriés
+                    sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${params.CHOICE_TAG}' --world-parameters '{\"env\":\"${params.ENVIRONMENT}\", \"baseUrl\":\"${BASE_URL}\", \"username\":\"${username}\", \"password\":\"${password}\"}'"
                     stash name: 'allure-results', includes: 'allure-results/*'
                 }
             }
         }
     }
 
-  post {
+    post {
         always {
             unstash 'allure-results'
             script {
