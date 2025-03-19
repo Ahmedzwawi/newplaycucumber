@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['DEV', 'PROD'], description: 'Choix de lenvironnement')
+        choice(name: 'ENVIRONMENT', choices: ['integration', 'recette'], description: 'Choix de lenvironnement')
         choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Tag des tests')
     }
 
