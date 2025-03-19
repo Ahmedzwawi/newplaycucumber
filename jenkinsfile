@@ -10,7 +10,7 @@ pipeline {
         stage('Install Dependencies') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/playwright:v1.51.0-focal' // ✅ Image avec Node.js
+                     image 'mcr.microsoft.com/playwright:v1.51.0-noble' // ✅ Image avec Node.js
                     args '-u root:root'
                 }
             }
@@ -27,7 +27,7 @@ pipeline {
         stage('Run Tests') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/playwright:v1.51.0-focal' // ✅ Même image avec Node.js
+                     image 'mcr.microsoft.com/playwright:v1.51.0-noble'// ✅ Même image avec Node.js
                     args '-u root:root'
                 }
             }
