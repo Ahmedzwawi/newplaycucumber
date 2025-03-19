@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+     "test:dev": "baseUrl='http://192.168.1.95:9091/admin/login/?next=/admin/' npx cucumber-js",
+  "test:prod": "baseUrl='http://192.168.1.95:9092/admin/login/?next=/admin/' npx cucumber-js"
   },
+
   "keywords": [],
   "author": "",
   "license": "ISC",
