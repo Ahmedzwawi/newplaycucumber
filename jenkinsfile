@@ -8,9 +8,16 @@ pipeline {
 
     stages {
         stage('Install Dependencies') {
-            agent any
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.51.0-focal' // ✅ Image avec Node.js
+                    args '-u root:root'
+                }
+            }
             steps {
                 script {
+                    sh 'node -v' // Vérifier la version de Node.js
+                    sh 'npm -v' // Vérifier la version de npm
                     sh 'npm ci'
                     stash name: 'node_modules', includes: 'node_modules/**'
                 }
@@ -20,13 +27,12 @@ pipeline {
         stage('Run Tests') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/playwright:v1.51.0-noble'
+                    image 'mcr.microsoft.com/playwright:v1.51.0-focal' // ✅ Même image avec Node.js
                     args '-u root:root'
                 }
             }
             steps {
                 script {
-                    // ✅ Définition correcte de BASE_URL
                     def BASE_URL = params.ENVIRONMENT == 'DEV' ? 'http://192.168.1.95:9091/admin/login/?next=/admin/' : 'http://192.168.1.95:9092/admin/login/?next=/admin/'
                     echo "Tests en cours sur : ${BASE_URL}"
 
