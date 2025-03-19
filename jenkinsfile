@@ -1,37 +1,75 @@
 pipeline {
     agent any
-    // parameters {
-    //     string(name: 'String_TAG', defaultValue: '', description: 'Tag de test')
-    //     choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration','@Post'], description: 'Sélectionne un tag de test')
-    // }
-    stages {
-        stage('build and install') {
-            agent {
-                docker {
-                    image 'mcr.microsoft.com/playwright:v1.51.0-noble'
-                    args '-u root:root'
-                }
-            }
 
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['DEV', 'PROD'], description: 'Choix de l\'environnement')
+        choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Tag des tests')
+    }
+
+    environment {
+        BASE_URL = params.ENVIRONMENT == 'DEV' ? 'http://192.168.1.95:9091/admin/login/?next=/admin/' : 'http://192.168.1.95:9092/admin/login/?next=/admin/'
+    }
+
+    stages {
+        stage('Install Dependencies') {
+            agent any
             steps {
                 script {
-                    
                     sh 'npm ci'
-                    // def tagToUse = params.String_TAG ?: params.CHOICE_TAG
-                    // sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${params.CHOICE_TAG}'"
-                    // sh "npm run only '${params.CHOICE_TAG}'"
-                    sh 'npx cucumber-js --format json:reports/cucumber-report.json'
-                    stash name: 'allure-results', includes: 'allure-results/*'
-
+                    stash name: 'node_modules', includes: 'node_modules/**'
                 }
             }
+        }
 
+        stage('Run Tests') {
+            parallel {
+                stage('Tests on DEV') {
+                    when { expression { params.ENVIRONMENT == 'DEV' } }
+                    agent {
+                        docker {
+                            image 'mcr.microsoft.com/playwright:v1.51.0-noble'
+                            args '-u root:root'
+                        }
+                    }
+                    steps {
+                        script {
+                            unstash 'node_modules'
+                            sh "npx cucumber-js --format json:reports/dev-cucumber-report.json --tags '${params.CHOICE_TAG}' --world-parameters '{\"env\":\"DEV\", \"baseUrl\":\"${BASE_URL}\"}'"
+                            stash name: 'allure-results-dev', includes: 'allure-results/*'
+                        }
+                    }
+                }
+
+                stage('Tests on PROD') {
+                    when { expression { params.ENVIRONMENT == 'PROD' } }
+                    agent {
+                        docker {
+                            image 'mcr.microsoft.com/playwright:v1.51.0-noble'
+                            args '-u root:root'
+                        }
+                    }
+                    steps {
+                        script {
+                            unstash 'node_modules'
+                            sh "npx cucumber-js --format json:reports/prod-cucumber-report.json --tags '${params.CHOICE_TAG}' --world-parameters '{\"env\":\"PROD\", \"baseUrl\":\"${BASE_URL}\"}'"
+                            stash name: 'allure-results-prod', includes: 'allure-results/*'
+                        }
+                    }
+                }
+            }
         }
     }
+
     post {
         always {
-            unstash 'allure-results'
             script {
+                try {
+                    unstash 'allure-results-dev'
+                    unstash 'allure-results-prod'
+                } catch (Exception e) {
+                    echo "Aucun résultat trouvé pour un des environnements."
+                }
+                
                 allure([
                     includeProperties: false,
                     jdk: '',
@@ -40,76 +78,22 @@ pipeline {
                     results: [[path: 'allure-results']]
                 ])
             }
+            
+            archiveArtifacts artifacts: 'reports/*.json', fingerprint: true
+            publishHTML(target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'reports',
+                reportFiles: '*.json',
+                reportName: 'Cucumber JSON Reports'
+            ])
+        }
+
+        failure {
+            mail to: 'team@exemple.com',
+                 subject: "❌ Tests échoués sur ${env.BUILD_URL}",
+                 body: "Les tests ont échoué sur ${params.ENVIRONMENT} (${BASE_URL}). Voir le rapport ici : ${env.BUILD_URL}"
         }
     }
-
-// post {
-//     always {
-//         cucumber buildStatus: 'UNSTABLE',
-//                 failedFeaturesNumber: 1,
-//                 failedScenariosNumber: 1,
-//                 skippedStepsNumber: 1,
-//                 failedStepsNumber: 1,
-//                 classifications: [
-//                         [key: 'Commit', value: '<a href="${GERRIT_CHANGE_URL}">${GERRIT_PATCHSET_REVISION}</a>'],
-//                         [key: 'Submitter', value: '${GERRIT_PATCHSET_UPLOADER_NAME}']
-//                 ],
-//                 reportTitle: 'My report',
-//                 fileIncludePattern: 'reports/cucumber-report.json',
-//                 sortingMethod: 'ALPHABETICAL',
-//                 trendsLimit: 100
-//     }
-// }
 }
-
-// pipeline { 
-//     agent any
-
-//     parameters {
-//         string(name: 'String_TAG', defaultValue: '', description: 'Tag de test personnalisé (laisser vide si non utilisé)')
-//         choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Sélectionne un tag de test')
-//     }
-
-//     stages {
-//         stage('Install Dependencies') {
-//             agent any
-//             steps {
-//                 script {
-//                     sh 'npm ci'
-//                     stash name: 'node_modules', includes: 'node_modules/**'
-//                 }
-//             }
-//         }
-
-//         stage('Run Tests') {
-//             agent {
-//                 docker {
-//                     image 'mcr.microsoft.com/playwright:v1.51.0-noble'
-//                     args '-u root:root'
-//                 }
-//             }
-//             steps {
-//                 script {
-//                  unstash 'node_modules'
-//                  sh 'npx cucumber-js --format json:reports/cucumber-report.json'
-//                  stash name: 'allure-results', includes: 'allure-results/*'
-//                 }
-//             }
-//         }
-//     }
-
-//     post {
-//         always {
-//             unstash 'allure-results'
-//             script {
-//                 allure([
-//                     includeProperties: false,
-//                     jdk: '',
-//                     properties: [],
-//                     reportBuildPolicy: 'ALWAYS',
-//                     results: [[path: 'allure-results']]
-//                 ])
-//             }
-//         }
-//     }
-// }
