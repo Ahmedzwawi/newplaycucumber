@@ -35,7 +35,7 @@ Feature: administration Login - login
   Scenario Outline: Error login
     Given I open the login page "<env>"
     When Ilogin"<username>"&"<password>"
-    Then I should be redirected to the dashboard
+    # Then I should be redirected to the dashboard
     Then I should see an error message
 
   @INT @ignore
