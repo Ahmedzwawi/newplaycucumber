@@ -37,8 +37,8 @@ Then('I should be redirected to the post page', async function () {
     // DataExchange.set('POST_CONTENT', randomContent);
     // console.log("Post Title récupéré : ", postTitle); 
 
-    console.log("Titre généré :", process.env.POST_TITLE);
-    console.log("Contenu généré :", process.env.POST_CONTENT);
+    // console.log("Titre généré :", process.env.POST_TITLE);
+    // console.log("Contenu généré :", process.env.POST_CONTENT);
     await this.page.fill('input[name="title"]', randomTitle);
     await this.page.fill('textarea[name="content"]', randomContent);
   });
