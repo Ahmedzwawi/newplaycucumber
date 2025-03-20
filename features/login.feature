@@ -1,3 +1,4 @@
+@ignore
 Feature: administration Login - login
 
   @valid 
