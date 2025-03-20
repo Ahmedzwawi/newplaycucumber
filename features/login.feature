@@ -10,7 +10,7 @@ Feature: administration Login - login
   Examples:
   | username			| password	 | env														   |
   | testeur_integration | testeur_qa   | http://192.168.1.95:9091/admin/login/?next=/admin/|
-  | testeur_recette | testeur_qa_3 | http://192.168.1.95:9091/admin/login/?next=/admin/|
+  | testeur_integration | testeur_qa_3 | http://192.168.1.95:9091/admin/login/?next=/admin/|
 # Feature: administration Login
 
 #   @valid @Integration
