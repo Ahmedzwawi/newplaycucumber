@@ -37,7 +37,7 @@ pipeline {
                     sh 'npm install --save-dev allure-cucumberjs'
                     
                     def environments = [
-                        'INT' : [baseUrl: 'http://dev.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_integration', password: 'testeur_qa'],
+                        'INT' : [baseUrl: 'http://int.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_integration', password: 'testeur_qa'],
                         'REC' : [baseUrl: 'http://rec.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_recette', password: 'testeur_qa_3']
                     ]
                     
