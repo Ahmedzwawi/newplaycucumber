@@ -37,8 +37,8 @@ pipeline {
                     sh 'npm install --save-dev allure-cucumberjs'
                     
                     def environments = [
-                        'DEV' : [baseUrl: 'http://dev.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_dev', password: 'testeur_qa'],
-                        'PROD' : [baseUrl: 'http://prod.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_prod', password: 'testeur_qa']
+                        'DEV' : [baseUrl: 'http://dev.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_integration', password: 'testeur_qa'],
+                        'PROD' : [baseUrl: 'http://rec.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_recette', password: 'testeur_qa_3']
                     ]
                     
                     def BASE_URL = environments[params.ENVIRONMENT].baseUrl
