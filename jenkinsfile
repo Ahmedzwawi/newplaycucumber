@@ -19,6 +19,8 @@ pipeline {
                     sh 'node -v'
                     // sh 'npm -v'
                     sh 'npm ci'
+                    sh 'npm install -g allure-commandline --save-dev'
+
                     // stash name: 'node_modules', includes: 'node_modules/**'
 
                 }
@@ -35,9 +37,6 @@ pipeline {
             steps {
                 script {
                     //   sh 'npm ci'
-                  sh 'npm install --save-dev allure-cucumberjs'
-                    sh 'npm install -g allure-commandline --save-dev'
-
                     // def environments = [
                     //     'INT' : [baseUrl: 'http://int.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_integration', password: 'testeur_qa'],
                     //     'REC' : [baseUrl: 'http://rec.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_recette', password: 'testeur_qa_3']
