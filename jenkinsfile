@@ -3,7 +3,7 @@ pipeline {
 
     parameters {
         // choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Tag des tests')
-        choice(name: 'ENVIRONMENT', choices: ['INT', 'REC','@valid', '@invalid', '@Integration', '@Post','@ignore','@all'], description: 'Choix de lenvironnement')
+        choice(name: 'ENVIRONMENT', choices: ['INT', 'REC','@valid', '@invalid', '@Integration', '@Post','@ignore','all'], description: 'Choix de lenvironnement')
     }
 
     stages {
