@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        // choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Tag des tests')
-        choice(name: 'ENVIRONMENT', choices: ['INT', 'REC','@valid', '@invalid', '@Integration', '@Post'], description: 'Choix de lenvironnement')
+        choice(name: 'ENVIRONMENT', choices: ['INT', 'REC', '@valid', '@invalid', '@Integration', '@Post'], description: 'Choix de l\'environnement')
     }
 
     stages {
@@ -16,13 +15,15 @@ pipeline {
             }
             steps {
                 script {
+                    // Vérification de la version Node
                     sh 'node -v'
-                    // sh 'npm -v'
+                    
+                    // Installation des dépendances npm
                     sh 'npm ci'
+                    
+                    // Installation d'Allure Commandline et des modules nécessaires pour Cucumber
                     sh 'npm install -g allure-commandline --save-dev'
-
-                    // stash name: 'node_modules', includes: 'node_modules/**'
-
+                    sh 'npm install allure-cucumberjs cucumber --save-dev'
                 }
             }
         }
@@ -36,21 +37,18 @@ pipeline {
             }
             steps {
                 script {
-                    //   sh 'npm ci'
-                    // def environments = [
-                    //     'INT' : [baseUrl: 'http://int.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_integration', password: 'testeur_qa'],
-                    //     'REC' : [baseUrl: 'http://rec.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_recette', password: 'testeur_qa_3']
-                    // ]
-                    
-                    // def BASE_URL = environments[params.ENVIRONMENT].baseUrl
-                    // sh "TAGS='@${params.ENVIRONMENT}' npx cucumber-js --config cucumber.js" 
-                    // sh "TAGS='@${params.ENVIRONMENT}' npx cucumber-js --config cucumber.js"
-                     def tagToUse = params.ENVIRONMENT
+                    // Définition de la variable de tag à utiliser pour les tests
+                    def tagToUse = params.ENVIRONMENT
                     echo "Running tests with tag: @${tagToUse}"
-                    sh 'npm install allure-cucumberjs cucumber --save-dev'
-                    sh "TAGS='@${tagToUse}' npx cucumber-js  --format allure-cucumberjs/reporter"
+                    
+                    // Exécution des tests Cucumber avec le reporter Allure
+                    sh "TAGS='@${tagToUse}' npx cucumber-js --format allure-cucumberjs/reporter"
+                    
+                    // Génération du rapport Allure en forçant le nettoyage des anciennes versions
                     sh "allure generate ./allure-results -o ./allure-report --clean"
-                  stash name: 'allure-results', includes: 'allure-results/*'
+                    
+                    // Stash des résultats de test pour être utilisés dans le post build
+                    stash name: 'allure-results', includes: 'allure-results/*'
                 }
             }
         }
@@ -58,9 +56,9 @@ pipeline {
 
     post {
         always {
+            // Restauration des résultats Allure pour le rapport final
             unstash 'allure-results'
             script {
-                
                 allure([
                     includeProperties: false,
                     jdk: '',
@@ -72,6 +70,7 @@ pipeline {
         }
     }
 }
+
 
 // pipeline {
 //     agent any
