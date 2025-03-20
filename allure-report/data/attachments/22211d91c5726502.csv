@@ -1,0 +1,5 @@
+username,password,env
+testeur_recetteFaux,testeur_qa_3,http://int.siteinfos.com/admin/login/?next=/admin/
+testeur_recette_2_faut,testeur_qa_4,http://int.siteinfos.com/admin/login/?next=/admin/
+testeur_recetteFaux,testeur_qa_3,http://int.siteinfos.com/admin/login/?next=/admin/
+testeur_recette_2,testeur_qa_4_faut,http://int.siteinfos.com/admin/login/?next=/admin/
