@@ -1,17 +1,13 @@
 import { Page } from 'playwright';
 
 export class LoginPage {
-  private page: Page;
-  private baseUrl: string;  
+  readonly page: Page;
 
-  constructor(page: Page, baseUrl: string) {
+  constructor(page: Page) {
     this.page = page;
-    this.baseUrl = baseUrl;  
   }
 
-  async goto() {
-    await this.page.goto(this.baseUrl);
-  }
+
   // async login(username: string, password: string) {
   //   await this.page.fill('input[name="username"]', username);
   //   await this.page.fill('input[name="password"]', password);
@@ -26,6 +22,11 @@ export class LoginPage {
     dashboard: '.colMS'
 
   }
+  async goto(url: string) {
+    await this.page.goto(url);
+}
+
+  
   async username(username: string) {
     await this.page.fill(this.Elements.username, username);
   }
