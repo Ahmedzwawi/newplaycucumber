@@ -18,8 +18,8 @@ When('Ilogin{string}&{string}', async function (username: string, password: stri
   dashboardPage = new PostPage(this.page);
   const postTitle = process.env.POST_TITLE;
   const postContent = process.env.POST_CONTENT;
-  console.log("Titre généré :", postTitle);
-  console.log("Contenu généré :", postContent);
+  // console.log("Titre généré :", postTitle);
+  // console.log("Contenu généré :", postContent);
   // const postTitle = DataExchange.get('POST_TITLE'); 
   // console.log("Post Title récupéré : ", postTitle); 
   

@@ -31,8 +31,8 @@ Then('I should be redirected to the post page', async function () {
   When('I fill the form with the data', async function () {
     const randomTitle = faker.lorem.words(3);
     const randomContent = faker.lorem.paragraph();
-     process.env.POST_TITLE = randomTitle;
-    process.env.POST_CONTENT = randomContent;
+    //  process.env.POST_TITLE = randomTitle;
+    // process.env.POST_CONTENT = randomContent;
     // const postTitle = DataExchange.set('POST_TITLE', randomTitle);
     // DataExchange.set('POST_CONTENT', randomContent);
     // console.log("Post Title récupéré : ", postTitle); 
