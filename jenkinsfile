@@ -46,8 +46,6 @@ pipeline {
                     // sh "TAGS='@${params.ENVIRONMENT}' npx cucumber-js --config cucumber.js" 
                     // sh "TAGS='@${params.ENVIRONMENT}' npx cucumber-js --config cucumber.js"
                      def tagToUse = params.ENVIRONMENT
-                    echo "Running tests with tag: @${tagToUse}"
-
                     sh "TAGS='@${tagToUse}' npx cucumber-js --config cucumber.js"
                   stash name: 'allure-results', includes: 'allure-results/*'
                 }
