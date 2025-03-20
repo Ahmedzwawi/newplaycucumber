@@ -50,7 +50,7 @@ pipeline {
                     if (tagToUse == 'all') {
                 sh 'npx cucumber-js --config cucumber.js --format allure-cucumberjs/reporter'
                     } else if (tagToUse == 'ignore') {
-                sh 'npx cucumber-js --config cucumber.js --tags "not @ignore --format allure-cucumberjs/reporter"'
+                sh "TAGS='not @ignore' npx cucumber-js --config cucumber.js"
                     }
                     else {
              sh "TAGS='@${tagToUse}' npx cucumber-js --config cucumber.js --format allure-cucumberjs/reporter"
