@@ -3,7 +3,7 @@ pipeline {
 
     parameters {
         // choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Tag des tests')
-        choice(name: 'ENVIRONMENT', choices: ['INT', 'REC','@valid', '@invalid', '@Integration', '@Post','@ignore','all'], description: 'Choix de lenvironnement')
+        choice(name: 'ENVIRONMENT', choices: ['INT', 'REC','@valid', '@invalid', '@Integration', '@Post','all'], description: 'Choix de lenvironnement')
     }
 
     stages {
@@ -47,7 +47,7 @@ pipeline {
                     // sh "TAGS='@${params.ENVIRONMENT}' npx cucumber-js --config cucumber.js"
                      def tagToUse = params.ENVIRONMENT
                     // sh "TAGS='@${tagToUse}' npx cucumber-js --config cucumber.js"
-                    if (tagToUse == 'INT') {
+                    if (tagToUse == 'all') {
                 sh 'npx cucumber-js --config cucumber.js --format allure-cucumberjs/reporter'
                     } else if (tagToUse == 'ignore') {
                 sh "TAGS='not @ignore' npx cucumber-js --config cucumber.js"

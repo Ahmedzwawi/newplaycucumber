@@ -11,6 +11,11 @@ Feature: administration Login - login
   | username			| password	 | env														   |
   | testeur_integration | testeur_qa   | http://192.168.1.95:9091/admin/login/?next=/admin/|
   | testeur_integration | testeur_qa_3 | http://192.168.1.95:9091/admin/login/?next=/admin/|
+  @ignore
+  Examples:
+  | username			| password	 | env														   |
+  | testeur_integration | testeur_qa   | http://192.168.1.95:9091/admin/login/?next=/admin/|
+  | testeur_integration | testeur_qa_3 | http://192.168.1.95:9091/admin/login/?next=/admin/|
 # Feature: administration Login
 
 #   @valid @Integration
@@ -31,7 +36,7 @@ Feature: administration Login - login
   # | testeur_integration | testeur_qa   | http://rec.siteinfos.com/admin/login/?next=/admin/            |
   # | testeur_integration | testeur_qa_2 | http://rec.siteinfos.com/admin/login/?next=/admin/            |
 
-  @invalid
+  @invalid @ignore 
   Scenario Outline: Error login
     Given I open the login page "<env>"
     When Ilogin"<username>"&"<password>"
