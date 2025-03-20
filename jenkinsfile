@@ -18,8 +18,8 @@ pipeline {
                 script {
                     sh 'node -v'
                     // sh 'npm -v'
-                    // sh 'npm ci'
-                    // stash name: 'node_modules', includes: 'node_modules/**'
+                    sh 'npm ci'
+                    stash name: 'node_modules', includes: 'node_modules/**'
                 }
             }
         }
@@ -33,8 +33,6 @@ pipeline {
             }
             steps {
                 script {
-                    // sh 'npm ci'
-                    sh 'npm install --save-dev allure-cucumberjs'
                     
                     def environments = [
                         'INT' : [baseUrl: 'http://int.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_integration', password: 'testeur_qa'],
@@ -42,7 +40,8 @@ pipeline {
                     ]
                     
                     // def BASE_URL = environments[params.ENVIRONMENT].baseUrl
-                    // sh "TAGS='@${params.ENVIRONMENT}' npx cucumber-js --config cucumber.js"                            
+                    // sh "TAGS='@${params.ENVIRONMENT}' npx cucumber-js --config cucumber.js" 
+                    unstash 'node_modules'                           
                     sh "TAGS='@${tagToUse.toLowerCase()}' npx cucumber-js --config cucumber.js"                          
 
                   stash name: 'allure-results', includes: 'allure-results/*'
