@@ -33,7 +33,8 @@ pipeline {
             }
             steps {
                 script {
-                    
+                    // sh 'npm ci'
+                    sh 'npm install --save-dev allure-cucumberjs'
                     
                     def environments = [
                         'INT' : [baseUrl: 'http://int.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_integration', password: 'testeur_qa'],
