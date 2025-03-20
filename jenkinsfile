@@ -48,10 +48,9 @@ pipeline {
                      def tagToUse = params.ENVIRONMENT
                     // sh "TAGS='@${tagToUse}' npx cucumber-js --config cucumber.js"
 
-                    // if (params.ENVIRONMENT == 'all') {
-                    //     sh 'npx cucumber-js --config cucumber.js'
-                    // } else 
-                    if (params.ENVIRONMENT == 'ignore') {
+                    if (params.ENVIRONMENT == 'all') {
+                        sh 'npx cucumber-js --config cucumber.js'
+                    } else if (params.ENVIRONMENT == 'ignore') {
                         sh "TAGS=' not @${tagToUse}' npx cucumber-js --config cucumber.js"
                     }
                     else {
