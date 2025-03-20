@@ -1,3 +1,0 @@
-username,password,env
-testeur_integration,testeur_qa,http://rec.siteinfos.com/admin/login/?next=/admin/
-testeur_integration,testeur_qa_2,http://rec.siteinfos.com/admin/login/?next=/admin/
