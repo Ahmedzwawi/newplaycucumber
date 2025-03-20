@@ -42,7 +42,7 @@ pipeline {
                 sh "TAGS='not @ignore' npx cucumber-js --config cucumber.js"
                 }
                     else {
-                sh "TAGS='@${tagToUse}' npx cucumber-js --config cucumber.js --format allure-cucumberjs/reporter"
+                sh "npx cucumber-js --config cucumber.js  --format allure-cucumberjs/reporter --tags='not @ignore'"
                     }
                   stash name: 'allure-results', includes: 'allure-results/*'
                 }
