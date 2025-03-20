@@ -49,7 +49,7 @@ pipeline {
                     echo "Running tests with tag: @${tagToUse}"
 
                     sh "TAGS='@${tagToUse}' npx cucumber-js  --format allure-cucumberjs/reporter"
-                    sh "allure generate ./allure-results -o ./allure-report --clean
+                    sh "allure generate ./allure-results -o ./allure-report --clean"
 "
                   stash name: 'allure-results', includes: 'allure-results/*'
                 }
