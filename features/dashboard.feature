@@ -16,3 +16,5 @@ Feature: administration dashboard
       Examples:
   | username            | password     | env                                                           |
   | testeur_integration | testeur_qa   | http://192.168.1.95:9091/admin/login/?next=/admin/|
+  | testeur_integration | testeur_qa   | http://192.168.1.95:9091/admin/login/?next=/admin/|
+

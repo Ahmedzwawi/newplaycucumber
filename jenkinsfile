@@ -36,12 +36,9 @@ pipeline {
             steps {
                 script {
                 def tagToUse = params.ENVIRONMENT
-                    if (tagToUse == 'INT') {
-                sh "npx cucumber-js --config cucumber.js --format allure-cucumberjs --tags 'not @ignore'"
-                    } else if (tagToUse == 'ignore') {
+                    if (tagToUse == 'all') {
                 sh "npx cucumber-js --config cucumber.js --format allure-cucumberjs/reporter --tags='not @ignore'"
-                }
-                    else {
+                    }else {
                 sh "TAGS='@${tagToUse}' npx cucumber-js --config cucumber.js --format allure-cucumberjs/reporter"
                     }
                   stash name: 'allure-results', includes: 'allure-results/*'
