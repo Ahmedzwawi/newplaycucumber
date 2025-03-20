@@ -1,15 +1,14 @@
-#avec snippet
 Feature: administration Login - login
 
   @valid @Integration
   Scenario Outline: Successful login login
-    Given I open the login page "<env>"
-    When Ilogin"<username>"&"<password>"
-    # Then I should be redirected to the dashboard
+  Given I open the login page "<env>"
+  When Ilogin"<username>"&"<password>"
+  # Then I should be redirected to the dashboard
 
   @int
   Examples:
-  | username            | password     | env                                                           |
+  | username			| password	 | env														   |
   | testeur_integration | testeur_qa   | http://192.168.1.95:9091/admin/login/?next=/admin/|
   | testeur_integration | testeur_qa_2 | http://192.168.1.95:9091/admin/login/?next=/admin/|
 # Feature: administration Login

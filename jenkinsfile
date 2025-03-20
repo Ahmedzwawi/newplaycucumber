@@ -2,30 +2,24 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['integration', 'recette'], description: 'Choix de l\'environnement')
+        choice(name: 'ENVIRONMENT', choices: ['DEV', 'PROD'], description: 'Choix de lenvironnement')
         choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Tag des tests')
-    }
-
-    environment {
-        BASE_URL = "${params.ENVIRONMENT == 'integration' ? 'http://int.siteinfos.com/admin/login/?next=/admin/' : 'http://rec.siteinfos.com/admin/login/?next=/admin/'}"
-        USERNAME = "${params.ENVIRONMENT == 'integration' ? 'testeur_integration' : 'testeur_recette'}"
-        PASSWORD = "${params.ENVIRONMENT == 'integration' ? 'testeur_qa' : 'testeur_qa_3'}"
     }
 
     stages {
         stage('Install Dependencies') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/playwright:v1.51.0-noble'
-                    args '-u root:root'
+                     image 'mcr.microsoft.com/playwright:v1.51.0-noble' 
+                     args '-u root:root'
                 }
             }
             steps {
                 script {
                     sh 'node -v'
                     sh 'npm -v'
-                    sh 'npm ci'
-                    stash name: 'node_modules', includes: 'node_modules/**'
+                    sh 'npm ci'  // Install dependencies
+                    stash name: 'node_modules', includes: 'node_modules/**'  // Cache node_modules
                 }
             }
         }
@@ -33,16 +27,33 @@ pipeline {
         stage('Run Tests') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/playwright:v1.51.0-noble'
-                    args '-u root:root'
+                     image 'mcr.microsoft.com/playwright:v1.51.0-noble'
+                     args '-u root:root'
                 }
             }
             steps {
                 script {
+                    // Install dependencies and Allure reporter
                     sh 'npm ci'
                     sh 'npm install --save-dev allure-cucumberjs'
-                    unstash 'node_modules'
-                    sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${params.CHOICE_TAG}' --world-parameters '{\"env\":\"${params.ENVIRONMENT}\", \"baseUrl\":\"${BASE_URL}\"}'"
+
+                    // Define environment variables for different environments
+                    def environments = [
+                        'DEV' : [baseUrl: 'http://dev.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_dev', password: 'testeur_dev_pw'],
+                        'PROD' : [baseUrl: 'http://prod.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_prod', password: 'testeur_prod_pw']
+                    ]
+
+                    def BASE_URL = environments[params.ENVIRONMENT].baseUrl
+                    def USERNAME = environments[params.ENVIRONMENT].username
+                    def PASSWORD = environments[params.ENVIRONMENT].password
+
+                    // Run the tests using cucumber with the chosen tag and environment parameters
+                    sh """
+                    npx cucumber-js --format json:reports/cucumber-report.json \
+                    --tags '${params.CHOICE_TAG}' \
+                    --world-parameters '{\"env\":\"${params.ENVIRONMENT}\", \"baseUrl\":\"${BASE_URL}\", \"username\":\"${USERNAME}\", \"password\":\"${PASSWORD}\"}'
+                    """
+                    // Stash the Allure results
                     stash name: 'allure-results', includes: 'allure-results/*'
                 }
             }
@@ -51,7 +62,7 @@ pipeline {
 
     post {
         always {
-            unstash 'allure-results'
+            unstash 'allure-results'  // Retrieve the stashed results
             script {
                 allure([
                     includeProperties: false,
