@@ -20,7 +20,6 @@ pipeline {
                     // sh 'npm -v'
                     sh 'npm ci'
                     sh 'npm install -g allure-commandline --save-dev'
-
                     // stash name: 'node_modules', includes: 'node_modules/**'
 
                 }
@@ -36,24 +35,14 @@ pipeline {
             }
             steps {
                 script {
-                    //   sh 'npm ci'
-                    // def environments = [
-                    //     'INT' : [baseUrl: 'http://int.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_integration', password: 'testeur_qa'],
-                    //     'REC' : [baseUrl: 'http://rec.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_recette', password: 'testeur_qa_3']
-                    // ]
-                    
-                    // def BASE_URL = environments[params.ENVIRONMENT].baseUrl
-                    // sh "TAGS='@${params.ENVIRONMENT}' npx cucumber-js --config cucumber.js" 
-                    // sh "TAGS='@${params.ENVIRONMENT}' npx cucumber-js --config cucumber.js"
-                     def tagToUse = params.ENVIRONMENT
-                    // sh "TAGS='@${tagToUse}' npx cucumber-js --config cucumber.js"
+                def tagToUse = params.ENVIRONMENT
                     if (tagToUse == 'all') {
                 sh 'npx cucumber-js --config cucumber.js --format allure-cucumberjs/reporter'
                     } else if (tagToUse == 'ignore') {
                 sh "TAGS='not @ignore' npx cucumber-js --config cucumber.js"
-                    }
+                }
                     else {
-             sh "TAGS='@${tagToUse}' npx cucumber-js --config cucumber.js --format allure-cucumberjs/reporter"
+                sh "TAGS='@${tagToUse}' npx cucumber-js --config cucumber.js --format allure-cucumberjs/reporter"
                     }
                   stash name: 'allure-results', includes: 'allure-results/*'
                 }
