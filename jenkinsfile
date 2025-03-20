@@ -42,7 +42,7 @@ pipeline {
                     ]
                     
                     def BASE_URL = environments[params.ENVIRONMENT].baseUrl
-                    sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${params.CHOICE_TAG}' --world-parameters '{\"env\":\"${params.ENVIRONMENT}\", \"baseUrl\":\"${BASE_URL}\"}'"
+                    sh "npx cucumber-js --format json:reports/cucumber-report.json --tags '${params.CHOICE_TAG}' --world-parameters '{\'env\':\'${params.ENVIRONMENT}\', \'baseUrl\':\'${BASE_URL}\'}'"
                     
                     stash name: 'allure-results', includes: 'allure-results/*'
                 }
