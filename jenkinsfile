@@ -3,7 +3,7 @@ pipeline {
 
     parameters {
         // choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Tag des tests')
-        choice(name: 'ENVIRONMENT', choices: ['INT', 'REC','@valid', '@invalid', '@Integration', '@Post'], description: 'Choix de lenvironnement')
+        choice(name: 'ENVIRONMENT', choices: ['INT', 'REC','@valid', '@invalid', '@Integration', '@Post','@ignore'], description: 'Choix de lenvironnement')
     }
 
     stages {
@@ -45,10 +45,18 @@ pipeline {
                     // def BASE_URL = environments[params.ENVIRONMENT].baseUrl
                     // sh "TAGS='@${params.ENVIRONMENT}' npx cucumber-js --config cucumber.js" 
                     // sh "TAGS='@${params.ENVIRONMENT}' npx cucumber-js --config cucumber.js"
-                     def tagToUse = params.ENVIRONMENT
-                    echo "Running tests with tag: @${tagToUse}"
+                    def tagToUse = params.ENVIRONMENT
 
+                    // if (tagToUse == 'all') {
+                    //     sh 'npx cucumber-js --config cucumber.js'
+                    // } else 
+                    if (tagToUse == 'ignore') {
+                        sh "TAGS=' not @${tagToUse}' npx cucumber-js --config cucumber.js"
+                    }
+                    else {
                     sh "TAGS='@${tagToUse}' npx cucumber-js --config cucumber.js"
+                    }
+
                     
                   stash name: 'allure-results', includes: 'allure-results/*'
                 }
