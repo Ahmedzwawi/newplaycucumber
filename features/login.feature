@@ -1,12 +1,12 @@
 Feature: administration Login - login
 
-  @valid
+  @valid 
   Scenario Outline: Successful login login
   Given I open the login page "<env>"
   When Ilogin"<username>"&"<password>"
   # Then I should be redirected to the dashboard
 
-  @INT
+  @INT 
   Examples:
   | username			| password	 | env														   |
   | testeur_integration | testeur_qa   | http://192.168.1.95:9091/admin/login/?next=/admin/|
@@ -31,14 +31,14 @@ Feature: administration Login - login
   # | testeur_integration | testeur_qa   | http://rec.siteinfos.com/admin/login/?next=/admin/            |
   # | testeur_integration | testeur_qa_2 | http://rec.siteinfos.com/admin/login/?next=/admin/            |
 
-  @invalid @Integration
+  @invalid
   Scenario Outline: Error login
     Given I open the login page "<env>"
     When Ilogin"<username>"&"<password>"
     Then I should be redirected to the dashboard
     Then I should see an error message
 
-  @int
+  @INT @ignore
   Examples:
   | username                | password        | env                                                           |
   | testeur_integrationFaux | testeur_qa      | http://int.siteinfos.com/admin/login/?next=/admin/            |
@@ -46,7 +46,7 @@ Feature: administration Login - login
   | testeur_integrationFaux | testeur_qaFaux  | http://int.siteinfos.com/admin/login/?next=/admin/            |
   | testeur_integrationFaux | testeur_qa_2    | http://int.siteinfos.com/admin/login/?next=/admin/            |
 
-  @rec
+  @rec @ignore
   Examples:
   | username                | password        | env                                                           |
   | testeur_recetteFaux     | testeur_qa_3    | http://int.siteinfos.com/admin/login/?next=/admin/            |
