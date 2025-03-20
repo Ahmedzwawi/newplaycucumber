@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['DEV', 'PROD'], description: 'Choix de l\'environnement')
+        choice(name: 'ENVIRONMENT', choices: ['INT', 'REC'], description: 'Choix de lenvironnement')
         choice(name: 'CHOICE_TAG', choices: ['@valid', '@invalid', '@Integration', '@Post'], description: 'Tag des tests')
     }
 
@@ -17,9 +17,9 @@ pipeline {
             steps {
                 script {
                     sh 'node -v'
-                    sh 'npm -v'
-                    sh 'npm ci'
-                    stash name: 'node_modules', includes: 'node_modules/**'
+                    // sh 'npm -v'
+                    // sh 'npm ci'
+                    // stash name: 'node_modules', includes: 'node_modules/**'
                 }
             }
         }
@@ -37,8 +37,8 @@ pipeline {
                     sh 'npm install --save-dev allure-cucumberjs'
                     
                     def environments = [
-                        'DEV' : [baseUrl: 'http://dev.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_integration', password: 'testeur_qa'],
-                        'PROD' : [baseUrl: 'http://rec.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_recette', password: 'testeur_qa_3']
+                        'INT' : [baseUrl: 'http://dev.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_integration', password: 'testeur_qa'],
+                        'REC' : [baseUrl: 'http://rec.siteinfos.com/admin/login/?next=/admin/', username: 'testeur_recette', password: 'testeur_qa_3']
                     ]
                     
                     def BASE_URL = environments[params.ENVIRONMENT].baseUrl
