@@ -14,8 +14,8 @@ module.exports = {
     tags :process.env.TAGS ||"",
     // tags: "@valid",  // Run specific tests with tags
     worldParameters: {           // Custom parameters for tests
-      env1Url:"http://int.siteinfos.com/admin/login/?next=/admin/",
-      env2Url:"http://rec.siteinfos.com/admin/login/?next=/admin/",
+      env1Url:'http://int.siteinfos.com/admin/login/?next=/admin/',
+      env2Url:'http://rec.siteinfos.com/admin/login/?next=/admin/',
     },
     requireModule: ["ts-node/register"], // Enable TypeScript
     timeout: 10000, // Set test timeout (10s)
