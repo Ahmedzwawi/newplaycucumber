@@ -9,6 +9,7 @@ module.exports = {
       "html:reports/cucumber-report.html",  // HTML report for human-readable output
       "allure-cucumberjs/reporter",
       "progress"  // Print the progress to the console
+      
 
     ],
     tags :process.env.TAGS ||"",
