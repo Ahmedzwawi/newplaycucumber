@@ -6,7 +6,7 @@ Feature: administration Login - login
   When Ilogin"<username>"&"<password>"
   # Then I should be redirected to the dashboard
 
-  @int
+  @INT
   Examples:
   | username			| password	 | env														   |
   | testeur_integration | testeur_qa   | http://192.168.1.95:9091/admin/login/?next=/admin/|
