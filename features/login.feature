@@ -31,25 +31,25 @@ Feature: administration Login - login
   # | testeur_integration | testeur_qa   | http://rec.siteinfos.com/admin/login/?next=/admin/            |
   # | testeur_integration | testeur_qa_2 | http://rec.siteinfos.com/admin/login/?next=/admin/            |
 
-  # @invalid @Integration
-  # Scenario Outline: Error login
-  #   Given I open the login page "<env>"
-  #   When Ilogin"<username>"&"<password>"
-  #   Then I should be redirected to the dashboard
-  #   Then I should see an error message
+  @invalid @Integration
+  Scenario Outline: Error login
+    Given I open the login page "<env>"
+    When Ilogin"<username>"&"<password>"
+    Then I should be redirected to the dashboard
+    Then I should see an error message
 
-  # @int
-  # Examples:
-  # | username                | password        | env                                                           |
-  # | testeur_integrationFaux | testeur_qa      | http://int.siteinfos.com/admin/login/?next=/admin/            |
-  # | testeur_integration     | testeur_qa_2    | http://int.siteinfos.com/admin/login/?next=/admin/            |
-  # | testeur_integrationFaux | testeur_qaFaux  | http://int.siteinfos.com/admin/login/?next=/admin/            |
-  # | testeur_integrationFaux | testeur_qa_2    | http://int.siteinfos.com/admin/login/?next=/admin/            |
+  @int
+  Examples:
+  | username                | password        | env                                                           |
+  | testeur_integrationFaux | testeur_qa      | http://int.siteinfos.com/admin/login/?next=/admin/            |
+  | testeur_integration     | testeur_qa_2    | http://int.siteinfos.com/admin/login/?next=/admin/            |
+  | testeur_integrationFaux | testeur_qaFaux  | http://int.siteinfos.com/admin/login/?next=/admin/            |
+  | testeur_integrationFaux | testeur_qa_2    | http://int.siteinfos.com/admin/login/?next=/admin/            |
 
-  # @rec
-  # Examples:
-  # | username                | password        | env                                                           |
-  # | testeur_recetteFaux     | testeur_qa_3    | http://int.siteinfos.com/admin/login/?next=/admin/            |
-  # | testeur_recette_2_faut  | testeur_qa_4    | http://int.siteinfos.com/admin/login/?next=/admin/            |
-  # | testeur_recetteFaux     | testeur_qa_3    | http://int.siteinfos.com/admin/login/?next=/admin/            |
-  # | testeur_recette_2       | testeur_qa_4_faut| http://int.siteinfos.com/admin/login/?next=/admin/            |
+  @rec
+  Examples:
+  | username                | password        | env                                                           |
+  | testeur_recetteFaux     | testeur_qa_3    | http://int.siteinfos.com/admin/login/?next=/admin/            |
+  | testeur_recette_2_faut  | testeur_qa_4    | http://int.siteinfos.com/admin/login/?next=/admin/            |
+  | testeur_recetteFaux     | testeur_qa_3    | http://int.siteinfos.com/admin/login/?next=/admin/            |
+  | testeur_recette_2       | testeur_qa_4_faut| http://int.siteinfos.com/admin/login/?next=/admin/            |
