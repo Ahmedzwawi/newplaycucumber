@@ -1,6 +1,6 @@
 Feature: administration Login - login
 
-  @valid @Integration
+  @valid @Int
   Scenario Outline: Successful login login
   Given I open the login page "<env>"
   When Ilogin"<username>"&"<password>"
